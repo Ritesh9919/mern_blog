@@ -3,8 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Label, Spinner, TextInput } from "flowbite-react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { signinSuccess } from "../redux/user/userSlice";
 
 function Signin() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -19,6 +22,7 @@ function Signin() {
       setLoading(true);
       const response = await axios.post("/api/auth/signin", formData);
       if (response.data.success) {
+        dispatch(signinSuccess(response.data.data));
         toast.success(response.data.message);
         navigate("/");
       }
