@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { signinSuccess } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 function Signin() {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ function Signin() {
                 "Sign In"
               )}
             </Button>
+            <OAuth />
           </form>
           <div className="flex gap-2 text-sm mt-5">
             <span>Have not an account?</span>

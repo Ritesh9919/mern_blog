@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   try {
@@ -43,6 +45,45 @@ export const signin = async (req, res, next) => {
       .json(new ApiResponse(true, "Signin successfully", user));
   } catch (error) {
     console.error("error in authController signin api", error.message);
+    next(error);
+  }
+};
+
+export const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email }).select(
+      "-password"
+    );
+    if (user) {
+      const token = await user.generateToken();
+      const expiryDate = new Date(Date.now() + 3600000);
+      res
+        .cookie("token", token, { httpOnly: true, expires: expiryDate })
+        .status(200)
+        .json(user);
+    } else {
+      const generatePassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(generatePassword, 10);
+      const newUser = await User.create({
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).slice(-8),
+        email: req.body.email,
+        password: hashedPassword,
+        profilePicture: req.body.photo,
+      });
+      const user = await User.findById(newUser._id).select("-password");
+      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
+      const expiryDate = new Date(Date.now() + 3600000);
+      res
+        .cookie("token", token, { httpOnly: true, expires: expiryDate })
+        .status(200)
+        .json(user);
+    }
+  } catch (error) {
+    console.error("error in authController google api", error.message);
     next(error);
   }
 };
