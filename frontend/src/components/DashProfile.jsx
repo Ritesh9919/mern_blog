@@ -18,6 +18,7 @@ function DashProfile() {
   const dispatch = useDispatch();
   const [imageFile, setImageFile] = useState(null);
   const [imageError, setImageError] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
   const { currentUser } = useSelector((state) => state.user);
@@ -32,6 +33,7 @@ function DashProfile() {
 
   const uploadImage = async (image) => {
     setImageError(null);
+    setImageUploading(true);
     const storage = new getStorage(app);
     const fileName = new Date().getTime() + image.name;
     const storageRef = ref(storage, fileName);
@@ -52,6 +54,7 @@ function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
           setFormData({ ...formData, profilePicture: downloadUrl });
+          setImageUploading(false);
         });
       }
     );
@@ -155,12 +158,13 @@ function DashProfile() {
           type="submit"
           gradientDuoTone="purpleToBlue"
           className="uppercase"
+          disabled={imageUploading}
         >
           Update
         </Button>
       </form>
       <div className="text-red-500 mt-5 flex justify-between items-center cursor-pointer">
-        <span>Delete Account</span>
+        <span onClick={handleDeleteAccount}>Delete Account</span>
         <span>Sign Out</span>
       </div>
     </div>
