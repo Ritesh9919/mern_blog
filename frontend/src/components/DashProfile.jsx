@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserSuccess } from "../redux/user/userSlice";
 import { Alert, Button, TextInput } from "flowbite-react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -10,9 +11,11 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "../firebase";
-
+import axios from "axios";
+import { toast } from "react-toastify";
 function DashProfile() {
   const fileRef = useRef();
+  const dispatch = useDispatch();
   const [imageFile, setImageFile] = useState(null);
   const [imageError, setImageError] = useState(false);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -60,10 +63,27 @@ function DashProfile() {
     }
   }, [imageFile]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        `/api/users/update/${currentUser._id}`,
+        formData
+      );
+      if (response.data.success) {
+        dispatch(updateUserSuccess(response.data.data));
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="text-center my-7 font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           ref={fileRef}
