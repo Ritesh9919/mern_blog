@@ -1,6 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUserSuccess, deleteUserSuccess } from "../redux/user/userSlice";
+import {
+  updateUserSuccess,
+  deleteUserSuccess,
+  signoutSuccess,
+} from "../redux/user/userSlice";
 import { Alert, Button, TextInput, Modal } from "flowbite-react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -100,6 +104,18 @@ function DashProfile() {
     }
   };
 
+  const handleSignout = async () => {
+    try {
+      const response = await axios.post("/api/auth/signout");
+      if (response.data.success) {
+        dispatch(signoutSuccess());
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="text-center my-7 font-semibold text-3xl">Profile</h1>
@@ -182,7 +198,7 @@ function DashProfile() {
       </form>
       <div className="text-red-500 mt-5 flex justify-between items-center cursor-pointer">
         <span onClick={() => setShowModel(true)}>Delete Account</span>
-        <span>Sign Out</span>
+        <span onClick={handleSignout}>Sign Out</span>
       </div>
       <Modal
         show={showModel}
