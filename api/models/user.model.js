@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       default:
         "https://tse4.mm.bing.net/th?id=OIP.hGSCbXlcOjL_9mmzerqAbQHaHa&pid=Api&P=0&h=180",
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -37,7 +41,10 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 userSchema.methods.generateToken = function () {
-  return jwt.sign({ userId: this._id }, process.env.JWT_SECRET);
+  return jwt.sign(
+    { userId: this._id, isAdmin: this.isAdmin },
+    process.env.JWT_SECRET
+  );
 };
 
 export const User = mongoose.model("User", userSchema);

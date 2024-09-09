@@ -75,7 +75,10 @@ export const google = async (req, res, next) => {
         profilePicture: req.body.photo,
       });
       const user = await User.findById(newUser._id).select("-password");
-      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
+      const token = jwt.sign(
+        { userId: newUser._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET
+      );
       const expiryDate = new Date(Date.now() + 3600000);
       res
         .cookie("token", token, { httpOnly: true, expires: expiryDate })
