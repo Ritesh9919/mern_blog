@@ -10,6 +10,8 @@ import Signup from "./pages/Signup";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
+import CreatePost from "./pages/CreatePost";
+import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 
 function App() {
   return (
@@ -25,11 +27,14 @@ function App() {
           </Route>
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
+          <Route element={<OnlyAdminPrivateRoute />}>
+            <Route path="/create-post" element={<CreatePost />} />
+          </Route>
         </Routes>
         <Footer />
       </Router>
       <ToastContainer
-        position="top-right"
+        position="bottom-right"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -38,7 +43,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        theme="light"
       />
     </>
   );

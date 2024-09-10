@@ -18,6 +18,8 @@ import { app } from "../firebase";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
+
 function DashProfile() {
   const fileRef = useRef();
   const dispatch = useDispatch();
@@ -27,6 +29,7 @@ function DashProfile() {
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
   const [showModel, setShowModel] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
 
   const handleImageChange = (e) => {
@@ -75,6 +78,7 @@ function DashProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.put(
         `/api/users/update/${currentUser._id}`,
         formData
@@ -86,6 +90,8 @@ function DashProfile() {
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,10 +197,21 @@ function DashProfile() {
           type="submit"
           gradientDuoTone="purpleToBlue"
           className="uppercase"
-          disabled={imageUploading}
+          disabled={loading || imageUploading}
         >
-          Update
+          {loading ? "Loading..." : "Update"}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to="/create-post">
+            <Button
+              type="button"
+              gradientDuoTone={"purpleToPink"}
+              className="w-full"
+            >
+              Create Post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="text-red-500 mt-5 flex justify-between items-center cursor-pointer">
         <span onClick={() => setShowModel(true)}>Delete Account</span>

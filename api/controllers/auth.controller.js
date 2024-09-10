@@ -37,10 +37,9 @@ export const signin = async (req, res, next) => {
       return next(new ApiError("Invalid Credentials", 401));
     }
     const user = await User.findById(existingUser._id).select("-password");
-    const expiryDate = new Date(Date.now() + 3600000);
     const token = user.generateToken();
     return res
-      .cookie("token", token, { httpOnly: true, expires: expiryDate })
+      .cookie("token", token, { httpOnly: true })
       .status(200)
       .json(new ApiResponse(true, "Signin successfully", user));
   } catch (error) {
@@ -57,10 +56,7 @@ export const google = async (req, res, next) => {
     if (user) {
       const token = await user.generateToken();
       const expiryDate = new Date(Date.now() + 3600000);
-      res
-        .cookie("token", token, { httpOnly: true, expires: expiryDate })
-        .status(200)
-        .json(user);
+      res.cookie("token", token, { httpOnly: true }).status(200).json(user);
     } else {
       const generatePassword =
         Math.random().toString(36).slice(-8) +
@@ -79,11 +75,8 @@ export const google = async (req, res, next) => {
         { userId: newUser._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET
       );
-      const expiryDate = new Date(Date.now() + 3600000);
-      res
-        .cookie("token", token, { httpOnly: true, expires: expiryDate })
-        .status(200)
-        .json(user);
+
+      res.cookie("token", token, { httpOnly: true }).status(200).json(user);
     }
   } catch (error) {
     console.error("error in authController google api", error.message);
