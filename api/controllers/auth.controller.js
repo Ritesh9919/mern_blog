@@ -17,7 +17,7 @@ export const signup = async (req, res, next) => {
     const user = await User.create({ username, email, password });
     return res.status(201).json(new ApiResponse(true, "Signup successfully"));
   } catch (error) {
-    console.error("error in authController signup api", error.message);
+    
     next(error);
   }
 };
@@ -43,7 +43,7 @@ export const signin = async (req, res, next) => {
       .status(200)
       .json(new ApiResponse(true, "Signin successfully", user));
   } catch (error) {
-    console.error("error in authController signin api", error.message);
+
     next(error);
   }
 };
@@ -79,7 +79,7 @@ export const google = async (req, res, next) => {
       res.cookie("token", token, { httpOnly: true }).status(200).json(user);
     }
   } catch (error) {
-    console.error("error in authController google api", error.message);
+
     next(error);
   }
 };

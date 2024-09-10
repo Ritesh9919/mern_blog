@@ -28,7 +28,6 @@ export const updateUser = async (req, res, next) => {
       .status(200)
       .json(new ApiResponse(true, "User profile updated", user));
   } catch (error) {
-    console.error("error in userController updateUser api", error.message);
     next(error);
   }
 };
@@ -42,7 +41,6 @@ export const deleteUser = async (req, res, next) => {
     await User.findByIdAndDelete(userId);
     return res.status(200).json(new ApiResponse(true, "user account deleted"));
   } catch (error) {
-    console.error("erron in userController deleteUser api", error.message);
     next(error);
   }
 };
