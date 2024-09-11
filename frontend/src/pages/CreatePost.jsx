@@ -60,7 +60,7 @@ function CreatePost() {
       const response = await axios.post("/api/posts/create", formData);
       if (response.data.success) {
         toast.success(response.data.message);
-        navigate(`/post/${response.data.data.slug}`);
+        // navigate(`/post/${response.data.data.slug}`);
       }
     } catch (error) {
       toast.error(error.response.data.message);
