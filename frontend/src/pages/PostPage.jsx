@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Button, Spinner } from "flowbite-react";
+import CallToAction from "../components/CallToAction";
 
 function PostPage() {
   const { postSlug } = useParams();
@@ -62,6 +63,9 @@ function PostPage() {
         className="p-3 w-full max-w-2xl mx-auto post-content"
         dangerouslySetInnerHTML={{ __html: post?.content }}
       ></div>
+      <div className="max-w-4xl mx-auto w-full">
+        <CallToAction />
+      </div>
     </main>
   );
 }
