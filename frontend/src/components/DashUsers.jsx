@@ -3,7 +3,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Table, Modal, Button } from "flowbite-react";
-import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
@@ -50,25 +49,22 @@ function DashUsers() {
     }
   };
 
-  //   const handleDeletePost = async () => {
-  //     setShowModel(false);
-  //     try {
-  //       const { data } = await axios.delete(
-  //         `/api/posts/delete/${postIdToDelete}/${currentUser._id}`
-  //       );
-  //       console.log(data);
-  //       if (data.success) {
-  //         setUserPosts((prev) => {
-  //           return prev.filter((post) => post._id !== postIdToDelete);
-  //         });
-  //         toast.success(data.message);
-  //       }
-  //     } catch (error) {
-  //       toast.error(error.response.data.message);
-  //     }
-  //   };
-
-  const handleDeleteUser = async () => {};
+  const handleDeleteUser = async () => {
+    setShowModel(false);
+    try {
+      const { data } = await axios.delete(
+        `/api/users/delete/${userIdToDelete}`
+      );
+      if (data.success) {
+        setUsers((prev) => {
+          return prev.filter((user) => user._id !== userIdToDelete);
+        });
+        toast.success(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
