@@ -83,3 +83,17 @@ export const getUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId).select("-password");
+    if (!user) {
+      return next(new ApiError("User not found", 404));
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(true, "User fetched successfully", user));
+  } catch (error) {
+    next(error);
+  }
+};

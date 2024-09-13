@@ -1,13 +1,30 @@
 import { Button, Textarea } from "flowbite-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Comment from "./Comment";
 
 function CommentSection({ postId }) {
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+
   const { currentUser } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const { data } = await axios.get(`/api/comments/getComments/${postId}`);
+        if (data.success) {
+          setComments(data.data);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    };
+    fetchComments();
+  }, [postId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +36,7 @@ function CommentSection({ postId }) {
       });
       if (data.success) {
         setComment("");
+        setComments([data, ...comments]);
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -68,6 +86,21 @@ function CommentSection({ postId }) {
             </Button>
           </div>
         </form>
+      )}
+      {comments.length == 0 ? (
+        <p className="text-sm my-5">No comments yet</p>
+      ) : (
+        <>
+          <div className="text-sm my-5 flex items-start gap-1">
+            <p>Comments</p>
+            <div className="border border-gray-400 rounded-sm py-1 px-2">
+              <p>{comments.length}</p>
+            </div>
+          </div>
+          {comments.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))}
+        </>
       )}
     </div>
   );
