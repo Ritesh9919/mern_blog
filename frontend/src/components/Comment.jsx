@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { Button } from "flowbite-react";
+import { LuThumbsUp } from "react-icons/lu";
+import { useSelector } from "react-redux";
 
-function Comment({ comment }) {
+function Comment({ comment, onLike }) {
   const [user, setUser] = useState({});
-  console.log(user);
+  const { currentUser } = useSelector((state) => state.user);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -38,6 +42,24 @@ function Comment({ comment }) {
           </span>
         </div>
         <p className="text-gray-500 pb-2">{comment.content}</p>
+        <div className="flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2">
+          <Button
+            className={`text-gray-400 hover:text-blue-500 ${
+              currentUser &&
+              comment.likes.includes(currentUser._id) &&
+              "!text-blue-500"
+            }`}
+            onClick={() => onLike(comment._id)}
+          >
+            <LuThumbsUp className="text-sm" />
+          </Button>
+          <p>
+            {comment.numberOfLikes > 0 &&
+              comment.numberOfLikes +
+                " " +
+                (comment.numberOfLikes == 1 ? "Like" : "Likes")}
+          </p>
+        </div>
       </div>
     </div>
   );

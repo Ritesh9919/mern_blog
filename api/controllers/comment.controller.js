@@ -31,3 +31,29 @@ export const getPostComments = async (req, res, next) => {
     next(error);
   }
 };
+
+export const likeComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return next("Comment not found", 404);
+    }
+    let deleted;
+    const userIndex = comment.likes.indexOf(req.user.userId);
+    if (userIndex == -1) {
+      comment.numberOfLikes += 1;
+      comment.likes.push(req.user.userId);
+      deleted = false;
+    } else {
+      comment.numberOfLikes -= 1;
+      comment.likes.splice(userIndex, 1);
+      deleted = true;
+    }
+    await comment.save();
+    return res
+      .status(201)
+      .json(new ApiResponse(true, deleted ? "DisLiked" : "Liked", comment));
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,12 +1,13 @@
 import { Button, Textarea } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Comment from "./Comment";
 
 function CommentSection({ postId }) {
+  const navigate = useNavigate();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
 
@@ -37,6 +38,33 @@ function CommentSection({ postId }) {
       if (data.success) {
         setComment("");
         setComments([data, ...comments]);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleLike = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+      const { data } = await axios.put(
+        `/api/comments/likeComment/${commentId}`
+      );
+      if (data.success) {
+        setComments(
+          comments.map((c) =>
+            c._id == commentId
+              ? {
+                  ...c,
+                  likes: data.data.likes,
+                  numberOfLikes: data.data.likes.length,
+                }
+              : c
+          )
+        );
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -98,7 +126,7 @@ function CommentSection({ postId }) {
             </div>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} />
+            <Comment key={comment._id} comment={comment} onLike={handleLike} />
           ))}
         </>
       )}
