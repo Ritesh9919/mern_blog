@@ -70,6 +70,14 @@ function CommentSection({ postId }) {
       toast.error(error.response.data.message);
     }
   };
+
+  const editComment = (comment, editedComment) => {
+    setComments(
+      comments.map((c) =>
+        c._id === comment._id ? { ...c, content: editedComment } : c
+      )
+    );
+  };
   return (
     <div className="max-w-3xl mx-auto p-3">
       {currentUser ? (
@@ -126,7 +134,12 @@ function CommentSection({ postId }) {
             </div>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} onLike={handleLike} />
+            <Comment
+              key={comment._id}
+              comment={comment}
+              onLike={handleLike}
+              onEdit={editComment}
+            />
           ))}
         </>
       )}
