@@ -94,6 +94,7 @@ export const getUser = async (req, res, next) => {
       .status(200)
       .json(new ApiResponse(true, "User fetched successfully", user));
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };

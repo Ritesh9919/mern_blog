@@ -5,11 +5,14 @@ import moment from "moment";
 import { Button, Textarea } from "flowbite-react";
 import { LuThumbsUp } from "react-icons/lu";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-function Comment({ comment, onLike, onEdit }) {
+function Comment({ comment, onLike, onEdit, onDelete }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
+
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -45,6 +48,7 @@ function Comment({ comment, onLike, onEdit }) {
       toast.error(error.response.data.message);
     }
   };
+
   return (
     <div className="flex p-4 border-b dark:border-gray-600 text-sm">
       <div className="flex-shrink-0 mr-3">
@@ -96,11 +100,7 @@ function Comment({ comment, onLike, onEdit }) {
             <p className="text-gray-500 pb-2">{comment.content}</p>
             <div className="flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2">
               <button
-                className={`text-gray-400 hover:text-blue-500 ${
-                  currentUser &&
-                  comment.likes.includes(currentUser._id) &&
-                  "!text-blue-500"
-                }`}
+                className={`text-gray-400 hover:text-blue-500`}
                 onClick={() => onLike(comment._id)}
               >
                 <LuThumbsUp className="text-sm" />
@@ -112,12 +112,20 @@ function Comment({ comment, onLike, onEdit }) {
                     (comment.numberOfLikes == 1 ? "Like" : "Likes")}
               </p>
               {currentUser && currentUser._id === comment.userId && (
-                <button
-                  onClick={handleEdit}
-                  className="text-gray-400 hover:text-blue-400"
-                >
-                  Edit
-                </button>
+                <>
+                  <button
+                    onClick={handleEdit}
+                    className="text-gray-400 hover:text-blue-400"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="text-gray-400 hover:text-blue-400"
+                    onClick={() => onDelete(comment._id)}
+                  >
+                    delete
+                  </button>
+                </>
               )}
             </div>
           </>

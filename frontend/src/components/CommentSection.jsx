@@ -1,31 +1,20 @@
-import { Button, Textarea } from "flowbite-react";
+import { Button, Textarea, Modal } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Comment from "./Comment";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 function CommentSection({ postId }) {
   const navigate = useNavigate();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [showModel, setShowModel] = useState(false);
+  const [commentIdToDelete, setCommentIdToDelete] = useState(null);
 
   const { currentUser } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const { data } = await axios.get(`/api/comments/getComments/${postId}`);
-        if (data.success) {
-          setComments(data.data);
-        }
-      } catch (error) {
-        toast.error(error.response.data.message);
-      }
-    };
-    fetchComments();
-  }, [postId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,6 +32,20 @@ function CommentSection({ postId }) {
       toast.error(error.response.data.message);
     }
   };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const { data } = await axios.get(`/api/comments/getComments/${postId}`);
+        if (data.success) {
+          setComments(data.data);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    };
+    fetchComments();
+  }, [postId]);
 
   const handleLike = async (commentId) => {
     try {
@@ -77,6 +80,24 @@ function CommentSection({ postId }) {
         c._id === comment._id ? { ...c, content: editedComment } : c
       )
     );
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    setShowModel(false);
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+      const { data } = await axios.delete(
+        `/api/comments/deleteComment/${commentId}`
+      );
+      if (data.success) {
+        setComments(comments.filter((c) => c._id !== commentId));
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
   return (
     <div className="max-w-3xl mx-auto p-3">
@@ -139,10 +160,41 @@ function CommentSection({ postId }) {
               comment={comment}
               onLike={handleLike}
               onEdit={editComment}
+              onDelete={(commentId) => {
+                setShowModel(true);
+                setCommentIdToDelete(commentId);
+              }}
             />
           ))}
         </>
       )}
+      <Modal
+        show={showModel}
+        onClose={() => setShowModel(false)}
+        popup
+        size={"md"}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-4 text-lg text-gray-500 dark:text-gray-400">
+              Are you sure you want delete this comment?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={() => handleDeleteComment(commentIdToDelete)}
+              >
+                Yes I'am sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModel(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
