@@ -7,6 +7,7 @@ import {
   HiOutlineUserGroup,
   HiAnnotation,
 } from "react-icons/hi";
+import { RxDashboard } from "react-icons/rx";
 import { useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
@@ -40,6 +41,13 @@ function DashSidebar() {
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
+          {currentUser.isAdmin && (
+            <Link to="/dashboard?tab=dash">
+              <Sidebar.Item active={tab === "dash"} icon={RxDashboard} as="div">
+                Dashboard
+              </Sidebar.Item>
+            </Link>
+          )}
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               active={tab === "profile"}
@@ -77,7 +85,7 @@ function DashSidebar() {
           {currentUser.isAdmin && (
             <Link to="/dashboard?tab=comments">
               <Sidebar.Item
-                active={tab === "posts"}
+                active={tab === "comments"}
                 icon={HiAnnotation}
                 as="div"
               >

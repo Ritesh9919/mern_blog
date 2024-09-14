@@ -75,6 +75,11 @@ function Header() {
                 @{currentUser.email}
               </span>
             </Dropdown.Header>
+            {currentUser.isAdmin && (
+              <Link to="/dashboard?tab=dash">
+                <Dropdown.Item>Dashboard</Dropdown.Item>
+              </Link>
+            )}
 
             <Link to="/dashboard?tab=profile">
               <Dropdown.Item>Profile</Dropdown.Item>
