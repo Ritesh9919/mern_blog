@@ -5,12 +5,13 @@ import { toast } from "react-toastify";
 import { Button, Spinner } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
+import PostCard from "../components/PostCard";
 
 function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState({});
-  console.log(post);
+  const [recentPosts, setRecentPosts] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -30,6 +31,20 @@ function PostPage() {
     };
     fetchPost();
   }, [postSlug]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data } = await axios.get(`/api/posts/getPosts?limit=${3}`);
+        if (data.success) {
+          setRecentPosts(data.data.posts);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   if (loading) {
     return (
@@ -68,6 +83,13 @@ function PostPage() {
         <CallToAction />
       </div>
       <CommentSection postId={post._id} />
+      <div className="flex flex-col justify-center items-center mb-5">
+        <h1 className="text-xl mt-5">Recent Articles</h1>
+        <div className="flex flex-wrap gap-5 justify-center mt-5">
+          {recentPosts &&
+            recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+        </div>
+      </div>
     </main>
   );
 }

@@ -100,7 +100,7 @@ function Comment({ comment, onLike, onEdit, onDelete }) {
             <p className="text-gray-500 pb-2">{comment.content}</p>
             <div className="flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2">
               <button
-                className={`text-gray-400 hover:text-blue-500`}
+                className={`hover:text-blue-500 text-gray-500`}
                 onClick={() => onLike(comment._id)}
               >
                 <LuThumbsUp className="text-sm" />
