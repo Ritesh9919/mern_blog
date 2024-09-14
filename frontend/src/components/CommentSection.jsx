@@ -36,7 +36,9 @@ function CommentSection({ postId }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const { data } = await axios.get(`/api/comments/getComments/${postId}`);
+        const { data } = await axios.get(
+          `/api/comments/getPostComments/${postId}`
+        );
         if (data.success) {
           setComments(data.data);
         }
