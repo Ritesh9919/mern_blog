@@ -5,10 +5,8 @@ import moment from "moment";
 import { Button, Textarea } from "flowbite-react";
 import { LuThumbsUp } from "react-icons/lu";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 function Comment({ comment, onLike, onEdit, onDelete }) {
-  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);

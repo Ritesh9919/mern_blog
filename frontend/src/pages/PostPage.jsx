@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Button, Spinner } from "flowbite-react";
-
 import CommentSection from "../components/CommentSection";
 import PostCard from "../components/PostCard";
 
