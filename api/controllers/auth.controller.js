@@ -14,10 +14,9 @@ export const signup = async (req, res, next) => {
     if (existingUser) {
       return next(new ApiError("user already signup", 400));
     }
-    const user = await User.create({ username, email, password });
+    await User.create({ username, email, password });
     return res.status(201).json(new ApiResponse(true, "Signup successfully"));
   } catch (error) {
-    
     next(error);
   }
 };
@@ -43,7 +42,6 @@ export const signin = async (req, res, next) => {
       .status(200)
       .json(new ApiResponse(true, "Signin successfully", user));
   } catch (error) {
-
     next(error);
   }
 };
@@ -55,7 +53,7 @@ export const google = async (req, res, next) => {
     );
     if (user) {
       const token = await user.generateToken();
-      const expiryDate = new Date(Date.now() + 3600000);
+
       res.cookie("token", token, { httpOnly: true }).status(200).json(user);
     } else {
       const generatePassword =
@@ -79,7 +77,6 @@ export const google = async (req, res, next) => {
       res.cookie("token", token, { httpOnly: true }).status(200).json(user);
     }
   } catch (error) {
-
     next(error);
   }
 };
