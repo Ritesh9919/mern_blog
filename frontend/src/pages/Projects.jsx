@@ -11,7 +11,7 @@ function Projects() {
     },
     {
       title: "Mern Blog",
-      live: "https://mern-auth-1-0c7x.onrender.com/",
+      live: "https://mern-blog-2-c8zz.onrender.com/",
       github: "https://github.com/Ritesh9919/mern_blog",
       img: "https://tse4.mm.bing.net/th?id=OIP.ZYAo10aHAottBKSWPWWLwQHaEW&pid=Api&P=0&h=180",
     },
